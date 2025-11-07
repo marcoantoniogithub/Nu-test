@@ -12,7 +12,6 @@ data class UrlShortenerState(
 sealed class UrlShortenerIntent {
     data class UpdateUrlInput(val newUrl: String) : UrlShortenerIntent()
     object ShortenButtonClick : UrlShortenerIntent()
-    object LoadRecentUrls : UrlShortenerIntent()
     data class UrlItemClicked(val url: ShortenUrl) : UrlShortenerIntent()
 }
 

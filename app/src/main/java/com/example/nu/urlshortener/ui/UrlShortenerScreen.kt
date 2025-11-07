@@ -1,6 +1,5 @@
 package com.example.nu.presentation.urlshortener
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,14 +13,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nu.urlshortener.domain.model.ShortenUrl
 import com.example.nu.urlshortener.ui.UrlShortenerIntent
 import com.example.nu.urlshortener.ui.UrlShortenerViewModel
@@ -31,6 +28,8 @@ import kotlinx.coroutines.launch
 
 val SkeletonLightGray = Color(0xFFEEEEEE)
 val SkeletonDarkGray = Color(0xFFDDDDDD)
+
+const val CIRCULAR_PROGRESS_INDICATOR_TAG = "CircularProgressIndicator"
 
 @Composable
 fun UrlShortenerScreen(
@@ -120,7 +119,11 @@ fun UrlInputBar(
         singleLine = true,
         trailingIcon = {
             if (isLoading) {
-                CircularProgressIndicator(Modifier.size(24.dp))
+                CircularProgressIndicator(
+                    Modifier
+                        .size(24.dp)
+                        .testTag(CIRCULAR_PROGRESS_INDICATOR_TAG)
+                )
             } else {
                 IconButton(
                     onClick = onShortenClick,

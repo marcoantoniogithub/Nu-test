@@ -16,7 +16,6 @@ class UrlRepositoryImpl @Inject constructor(
 
         val response = service.postShortenUrl(request)
 
-
         return ShortenUrl(
             alias = response.alias,
             originalUrl = response.links.originalUrl,

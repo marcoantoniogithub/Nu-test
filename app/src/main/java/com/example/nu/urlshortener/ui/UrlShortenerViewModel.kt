@@ -1,5 +1,6 @@
 package com.example.nu.urlshortener.ui
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nu.urlshortener.domain.model.ShortenUrl
@@ -19,17 +20,18 @@ class UrlShortenerViewModel @Inject constructor(
     private val shortenUrlUseCase: ShortenUrlUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(UrlShortenerState())
+    @VisibleForTesting
+    internal val _state = MutableStateFlow(UrlShortenerState())
     val state: StateFlow<UrlShortenerState> = _state.asStateFlow()
 
-    private val _effect = Channel<UrlShortenerEffect>(Channel.BUFFERED)
+    @VisibleForTesting
+    internal val _effect = Channel<UrlShortenerEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
     fun processIntent(intent: UrlShortenerIntent) {
         when (intent) {
             is UrlShortenerIntent.UpdateUrlInput -> updateInput(intent.newUrl)
             is UrlShortenerIntent.ShortenButtonClick -> shortenUrl()
-            is UrlShortenerIntent.LoadRecentUrls -> loadUrls()
             is UrlShortenerIntent.UrlItemClicked -> copyUrlToClipboard(intent.url)
         }
     }
@@ -46,9 +48,10 @@ class UrlShortenerViewModel @Inject constructor(
     }
 
     private fun shortenUrl() {
+        _state.update { it.copy(isLoading = true, error = null) }
+
         viewModelScope.launch {
             val longUrl = state.value.urlInput
-            _state.update { it.copy(isLoading = true, error = null) }
             try {
                 val shortened = shortenUrlUseCase(longUrl)
                 _state.update { currentState ->
@@ -64,6 +67,4 @@ class UrlShortenerViewModel @Inject constructor(
             }
         }
     }
-
-    private fun loadUrls() {}
 }
